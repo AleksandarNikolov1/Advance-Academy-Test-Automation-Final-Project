@@ -9,8 +9,8 @@ import static org.testng.AssertJUnit.*;
 
 public class RepositoryPageTest extends BaseTest{
 
-    private static final String VALID_EMAIL = "alfo0140@gmail.com";
-    private static final String VALID_PASSWORD = "Thedarklord99!";
+    private static final String VALID_EMAIL = "enter_valid_email";
+    private static final String VALID_PASSWORD = "enter_valid_pass";
     private static final String REPO_NAME = "Repository-test-name";
     private static final String REPO_NAME_CHANGED = "Repository-test-name-Changed";
 
@@ -83,7 +83,7 @@ public class RepositoryPageTest extends BaseTest{
         RepositoryPage repositoryPage = repositoriesPage.switchToMyRepository(REPO_NAME);
 
         repositoryPage.switchToSettings();
-        repositoryPage.deleteRepository("AleksandarNikolov1", REPO_NAME);
+        repositoryPage.deleteRepository("username", REPO_NAME);
     }
 
 }
