@@ -3,44 +3,42 @@ package com.github.tests;
 import com.github.pages.InitialPage;
 import com.github.pages.SignUpPage;
 import data.TestDataProvider;
-import io.qameta.allure.*;
-import net.bytebuddy.build.Plugin;
+import io.qameta.allure.Feature;
+import io.qameta.allure.Story;
 import org.testng.annotations.BeforeClass;
-import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
-import org.testng.asserts.SoftAssert;
 
 import static org.testng.AssertJUnit.*;
 
-public class SignUpPageTest extends BaseTest {
+@Feature("Registration")
+public class SignUpTest extends BaseTest {
+
+    private static final String VALID_EMAIL = "correctemail@gmail.com";
+    private static final String VALID_PASSWORD = "CorrectPassword123";
+    private static final String VALID_USERNAME = "CorrectUsername";
 
     InitialPage initialPage;
     SignUpPage signUpPage;
-    SoftAssert softAssert;
 
-    @BeforeMethod
+    @BeforeClass
     public void setupSignUpPage() {
         initialPage = new InitialPage();
-        signUpPage = initialPage.getSignUpPage();
-        softAssert = new SoftAssert();
+        signUpPage = initialPage.loadSignUpPage();
     }
 
 
     @Test(priority = 1)
     public void testWelcomeMessage() {
         String expectedWelcomeMessage = "Welcome to GitHub! Let’s begin the adventure";
-        String actualWelcomeMessage = signUpPage.getWelcomeMessage().replaceAll("\n", " ");
+        String actualWelcomeMessage = signUpPage.getWelcomeMessage()
+                .replaceAll("\n", " ");
 
         assertEquals(expectedWelcomeMessage, actualWelcomeMessage);
     }
 
-    @Epic("Authentication")
-    @Feature("Login")
-    @Story("Negative login tests with invalid emails")
-    @Severity(SeverityLevel.CRITICAL)
+    @Story("Test invalid registration emails")
     @Test(priority = 2, dataProvider = "invalid-emails", dataProviderClass = TestDataProvider.class)
     public void testInvalidEmails(String email, String expectedErrorMessage) {
-
 
         signUpPage.setEmail(email);
 
@@ -48,10 +46,12 @@ public class SignUpPageTest extends BaseTest {
         assertEquals(expectedErrorMessage, actualErrorMessage);
     }
 
+    @Story("Test invalid registration passwords")
     @Test(priority = 3, dataProvider = "invalid-passwords", dataProviderClass = TestDataProvider.class)
     public void testInvalidPasswords(String password, String expectedErrorMessage) {
         if (!signUpPage.isPasswordTextAreaPresent()) {
-            enterValidEmail();
+            signUpPage.setEmail(VALID_EMAIL);
+            signUpPage.clickConfirmEmailButton();
         }
 
         signUpPage.setPassword(password);
@@ -60,11 +60,14 @@ public class SignUpPageTest extends BaseTest {
     }
 
 
+    @Story("Test invalid registration usernames")
     @Test(priority = 4, dataProvider = "invalid-usernames", dataProviderClass = TestDataProvider.class)
     public void testInvalidUsernames(String username, String expectedErrorMessage) {
         if (!signUpPage.isUsernameTextAreaPresent()) {
-            enterValidEmail();
-            enterValidPassword();
+            signUpPage.setEmail(VALID_EMAIL);
+            signUpPage.clickConfirmEmailButton();
+            signUpPage.setPassword(VALID_PASSWORD);
+            signUpPage.clickConfirmPasswordButton();
         }
 
         signUpPage.setUsername(username);
@@ -73,52 +76,28 @@ public class SignUpPageTest extends BaseTest {
     }
 
     @Test(priority = 5)
-    public void testEmailPreferencesAreEnabled(){
-        enterValidEmail();
-        enterValidPassword();
-        enterValidUsername();
+    public void testEmailPreferencesAreEnabled() {
+        signUpPage.setEmail(VALID_EMAIL);
+        signUpPage.clickConfirmEmailButton();
+        signUpPage.setPassword(VALID_PASSWORD);
+        signUpPage.clickConfirmPasswordButton();
+        signUpPage.setUsername(VALID_USERNAME);
+        signUpPage.clickConfirmUsernameButton();
 
         signUpPage.clickEmailPreferencesCheckBox();
 
         assertTrue(signUpPage.isEmailPreferencesCheckBoxSelected());
- //       assertEquals(true, signUpPage.getEmailPreferencesCssValueIsChecked());
     }
 
+    @Story("Test valid registration")
     @Test(priority = 6)
     public void testValidRegistration() {
-        enterValidEmail();
-        enterValidPassword();
-        enterValidUsername();
+        signUpPage.signUp(VALID_EMAIL, VALID_PASSWORD, VALID_USERNAME);
 
-        signUpPage.clickEmailPreferencesCheckBox();
+        String expectedMessage = "Verify your account";
+        String actualMessage = signUpPage.getVerifyAccountMessage();
 
-        softAssert.assertTrue(signUpPage.isEmailPreferencesCheckBoxSelected());
-
-        signUpPage.clickConfirmRegistrationButton();
-
-        testWelcomeMessage();
-
-        softAssert.assertEquals("Verify your account", signUpPage.getVerifyAccountMessage());
-//        softAssert.assertEquals("Protecting your account", signUpPage.getProtectAccountMessage());
-//        softAssert.assertTrue(signUpPage.isVerifyButtonClickable());
-//        softAssert.assertTrue(signUpPage.isAudioButtonClickable());
-        softAssert.assertAll();
-    }
-
-
-    private void enterValidEmail() {
-        signUpPage.setEmail("correctemail@gmail.com");
-        signUpPage.clickConfirmEmailButton();
-    }
-
-    private void enterValidPassword() {
-        signUpPage.setPassword("CorrectPassword123");
-        signUpPage.clickConfirmPasswordButton();
-    }
-
-    private void enterValidUsername() {
-        signUpPage.setUsername("CorrectUsername");
-        signUpPage.clickConfirmUsernameButton();
+        assertEquals(expectedMessage, actualMessage);
     }
 }
 

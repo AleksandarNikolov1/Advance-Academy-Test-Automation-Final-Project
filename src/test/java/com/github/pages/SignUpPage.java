@@ -57,6 +57,11 @@ public class SignUpPage extends BasePage {
     @FindBy(xpath = "//*[@id='root']/div/div[2]/button")
     WebElement audioButton;
 
+//    @FindBy(xpath = "//iframe[@title='Please verify by completing this captcha.']")
+//    WebElement verificationAccountFrame;
+
+    @FindBy(id = "game-core-frame")
+    WebElement verificationAccountFrame;
 
     public String getWelcomeMessage() {
         waitForTextToBePresentInElement(welcomeMessage, "adventure");
@@ -69,36 +74,44 @@ public class SignUpPage extends BasePage {
         emailTextArea.sendKeys(email);
     }
 
+
+    @Step("Click \"Continue\" button")
     public void clickConfirmEmailButton(){
         waitForElementToBeClickable(confirmEmailButton);
         confirmEmailButton.click();
     }
 
+    @Step("Set password: {password}")
     public void setPassword(String password){
         passwordTextArea.clear();
         passwordTextArea.sendKeys(password);
     }
 
+    @Step("Click \"Continue\" button")
     public void clickConfirmPasswordButton(){
         waitForElementToBeClickable(confirmPasswordButton);
         confirmPasswordButton.click();
     }
 
+    @Step("Set username: {username}")
     public void setUsername(String username){
         usernameTextArea.clear();
         usernameTextArea.sendKeys(username);
     }
 
+    @Step("Click \"Continue\" button")
     public void clickConfirmUsernameButton(){
         waitForElementToBeClickable(confirmUsernameButton);
         confirmUsernameButton.click();
     }
 
+    @Step("Click email preferences check box")
     public void clickEmailPreferencesCheckBox(){
         waitForElementToBeClickable(emailPreferencesCheckBox);
         emailPreferencesCheckBox.click();
     }
 
+    @Step("Click \"Continue\" button")
     public void clickConfirmRegistrationButton(){
         waitForElementToBeClickable(confirmRegistrationButton);
         confirmRegistrationButton.click();
@@ -131,12 +144,25 @@ public class SignUpPage extends BasePage {
         return emailPreferencesCheckBox.isSelected();
     }
 
-//    public boolean getEmailPreferencesCssValueIsChecked(){
-//        return emailPreferencesCheckBox.getCssValue("checked").;
-//    }
+    @Step("Sign Up")
+    public void signUp(String email, String password, String username){
+        setEmail(email);
+        clickConfirmEmailButton();
+        setPassword(password);
+        clickConfirmPasswordButton();
+        setUsername(username);
+        clickConfirmUsernameButton();
+        clickConfirmRegistrationButton();
+    }
 
     public String getVerifyAccountMessage(){
         return verifyAccountMessage.getText();
+    }
+
+    public void switchToVerificationAccountFrame(){
+      //  scrollIntoViewWithJS(verificationAccountFrame);
+        waitForElementToBeVisible(verificationAccountFrame);
+        switchToFrame(verificationAccountFrame);
     }
 
     public String getProtectAccountMessage(){
@@ -155,11 +181,8 @@ public class SignUpPage extends BasePage {
     }
 
     public boolean isAudioButtonClickable(){
+        scrollIntoViewWithJS(audioButton);
         waitForElementToBeVisible(audioButton);
         return audioButton.isEnabled();
     }
-
-
-
-
 }

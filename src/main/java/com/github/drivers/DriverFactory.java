@@ -17,7 +17,7 @@ public class DriverFactory {
 
     private static final ThreadLocal<WebDriver> tlDriver = new ThreadLocal<>();
 
-    public static void setTlDriver(String browser, int wait){
+    public static void setTlDriver(String browser, int wait) {
 
         WebDriver driver;
 
@@ -54,12 +54,12 @@ public class DriverFactory {
         tlDriver.set(driver);
     }
 
-    public static WebDriver getDriver(){
+    public static WebDriver getDriver() {
         return tlDriver.get();
     }
 
-    public static void quitDriver(){
-        if (tlDriver.get() != null){
+    public static void quitDriver() {
+        if (tlDriver.get() != null) {
             tlDriver.get().quit();
             tlDriver.remove();
         }

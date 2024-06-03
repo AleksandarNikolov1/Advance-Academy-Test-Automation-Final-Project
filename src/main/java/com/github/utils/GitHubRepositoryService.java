@@ -1,20 +1,21 @@
-package com.github.tests;
+package com.github.utils;
 
+import io.qameta.allure.Step;
 import io.restassured.RestAssured;
-import org.testng.annotations.Test;
 
-public class GitHubApiManager extends ApiBaseTest{
+public class GitHubRepositoryService {
 
     static final String REPO_EP = "https://api.github.com/user/repos";
-    static final String TOKEN = "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";
+    static final String TOKEN = "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";
+    static final String USERNAME = "Test-username22";
 
+    @Step("Precondition - create repository")
     public static void createRepository(String repoName) {
 
         String requestBody = String.format("{\"name\": \"%s\"}", repoName);
 
         RestAssured
                 .given()
-                //        .header("Authorization", "token " + TOKEN)
                 .auth()
                 .oauth2(TOKEN)
                 .body(requestBody)
@@ -25,14 +26,13 @@ public class GitHubApiManager extends ApiBaseTest{
     }
 
 
-    public static void deleteRepository(String repoName){
-
-        String baseURL = "https://api.github.com/repos/AleksandarNikolov1/";
-        String deleteURL = baseURL + repoName;
+    @Step("Post-condition - delete repository")
+    public static void deleteRepository(String repoName) {
+        String baseURL = "https://api.github.com/repos/";
+        String deleteURL = baseURL + USERNAME + "/" + repoName;
 
         RestAssured
                 .given()
-//                  .header("Authorization", "token " + TOKEN)
                 .auth()
                 .oauth2(TOKEN)
                 .when()

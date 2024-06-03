@@ -22,4 +22,5 @@ public class TestDataProvider {
     private static Object[][] readInvalidUsernames() throws IOException, CsvException {
         return CsvReader.readCsvFile("src/test/resources/invalid-usernames.csv");
     }
+
 }

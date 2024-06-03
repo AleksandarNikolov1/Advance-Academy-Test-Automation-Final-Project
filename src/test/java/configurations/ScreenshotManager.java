@@ -22,6 +22,7 @@ public class ScreenshotManager {
         String fileName = "Screenshot_" + testName + "_" + timestamp + ".png";
         Path path = Paths.get("./Screenshots", fileName);
         try {
+            Files.createDirectories(path.getParent());
             Files.copy(screenshotFile.toPath(), path);
             Allure.addAttachment("Screenshot on Failure", "image/png", Files.newInputStream(path), ".png");
         } catch (IOException e) {

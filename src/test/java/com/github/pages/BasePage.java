@@ -13,17 +13,13 @@ import java.time.Duration;
 
 public abstract class BasePage {
 
-    private WebDriver driver;
-    private WebDriverWait wait;
+    private final WebDriver driver;
+    private final WebDriverWait wait;
 
     public BasePage() {
         driver = DriverFactory.getDriver();
         PageFactory.initElements(driver, this);
-        wait = new WebDriverWait(driver, Duration.ofSeconds(25));
-    }
-
-    public void waitForTextToBePresentInElement(WebElement element, String text) {
-        wait.until(ExpectedConditions.textToBePresentInElement(element, text));
+        wait = new WebDriverWait(driver, Duration.ofSeconds(20));
     }
 
     public void waitForElementToBeVisible(WebElement element) {
@@ -34,6 +30,15 @@ public abstract class BasePage {
         wait.until(ExpectedConditions.elementToBeClickable(element));
     }
 
+    public void waitForTextToBePresentInElement(WebElement element, String text) {
+        wait.until(ExpectedConditions.textToBePresentInElement(element, text));
+    }
+
+    public void scrollIntoViewWithJS(WebElement element) {
+        ((JavascriptExecutor) driver)
+                .executeScript("arguments[0].scrollIntoView(true);", element);
+    }
+
     public String getCurrentUrl(){
         return driver.getCurrentUrl();
     }
@@ -42,7 +47,16 @@ public abstract class BasePage {
         return driver.getTitle();
     }
 
-    public void scrollIntoViewWithJS(WebElement element) {
-        ((JavascriptExecutor) driver).executeScript("arguments[0].scrollIntoView(true);", element);
+    public void refresh(){
+        driver.navigate().refresh();
+    }
+
+    public void switchToFrame(WebElement iframe){
+        driver.switchTo().frame(iframe);
+        PageFactory.initElements(driver, iframe);
+    }
+
+    public void switchToDefaultContent(){
+        driver.switchTo().defaultContent();
     }
 }
